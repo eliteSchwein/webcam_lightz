@@ -152,6 +152,3 @@ if __name__ == '__main__':
 
     webThread.start()
     ledThread.start()
-
-    webThread.join()
-    ledThread.join()
