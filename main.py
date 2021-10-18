@@ -127,16 +127,19 @@ def start_web():
         (r"/socket", EchoWebSocket),
     ])
 
-if __name__ == '__main__':
-    button.when_activated = toggleLed
-    button.when_held = handleButtonHeld
-
-    web = start_web()
-    web.listen(8080)
-    tornado.ioloop.IOLoop.current().start()
-
+def start_led():
     while True:
         if buttonPressed:
             led.value = ledValue
             print(ledValue)
         sleep(0.05)
+
+if __name__ == '__main__':
+    button.when_activated = toggleLed
+    button.when_held = handleButtonHeld
+
+    start_led()
+
+    web = start_web()
+    web.listen(8080)
+    tornado.ioloop.IOLoop.current().start()
