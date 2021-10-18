@@ -131,7 +131,6 @@ def start_led():
     while True:
         if buttonPressed:
             led.value = ledValue
-            print(ledValue)
         sleep(0.05)
 
 if __name__ == '__main__':
