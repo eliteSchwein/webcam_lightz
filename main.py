@@ -23,7 +23,7 @@ def toggleLed():
         return
     else:
         buttonPressed = True
-        if (ledValue == 0.0):
+        if ledValue == 0.0:
             ledValue = 1.0
         print("enable LEDs with " + str(ledValue))
         return
@@ -42,12 +42,12 @@ def handleButtonHeld():
             if ledValue == 1.0:
                 fadeUp = False
             else:
-                ledValue = round(ledValue + 0.05, 2)
+                ledValue = round(ledValue + 0.005, 2)
         else:
             if ledValue == 0.0:
                 fadeUp = True
             else:
-                ledValue = round(ledValue - 0.05, 2)
+                ledValue = round(ledValue - 0.005, 2)
         print("enable LEDs with " + str(ledValue))
         sleep(0.1)
     return
