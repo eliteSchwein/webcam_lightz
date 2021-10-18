@@ -18,8 +18,6 @@ button = Button(buttonpin, hold_time=0.25)
 led = PWMLED(ledpin)
 
 webThread = None
-ledThread = None
-
 
 def toggleLed():
     global buttonPressed
@@ -146,5 +144,8 @@ if __name__ == '__main__':
     button.when_activated = toggleLed
     button.when_held = handleButtonHeld
 
+    webThread = Thread(target = start_web())
+
+    webThread.start()
+
     start_led()
-    start_web()
