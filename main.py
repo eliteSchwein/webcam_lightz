@@ -35,6 +35,6 @@ def handleButtonHeld():
 
 if __name__ == '__main__':
     button.when_activated = toggleLed()
-    button.when_held = handleButtonHeld()
+    #button.when_held = handleButtonHeld()
     while True:
         led.value = ledValue
