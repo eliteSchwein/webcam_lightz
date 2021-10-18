@@ -32,7 +32,10 @@ def updateValues(val, pressed):
         led.value = ledValue
 
     for client in clients:
-        EchoWebSocket.write_message(client, json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
+        if not client.ws_connection.stream.socket:
+            clients.remove(client)
+        else:
+            EchoWebSocket.write_message(client, json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
 
 
 def toggleLed():
