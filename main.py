@@ -130,8 +130,10 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
 
 
 def start_web():
+    print("Start API")
     web = handle_web()
     web.listen(8080)
+    tornado.ioloop.IOLoop.current().start()
 
 
 def handle_web():
@@ -144,6 +146,7 @@ def handle_web():
 
 
 def start_led():
+    print("Start LED")
     while True:
         if buttonPressed:
             led.value = ledValue
@@ -158,5 +161,3 @@ if __name__ == '__main__':
     webThread.start()
 
     start_led()
-
-    tornado.ioloop.IOLoop.current().start()
