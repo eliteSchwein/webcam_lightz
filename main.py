@@ -125,6 +125,7 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
             sleep(0.05)
 
     def on_message(self, message):
+        print(message)
         self.write_message(u"You said: " + message)
 
     def on_close(self):
