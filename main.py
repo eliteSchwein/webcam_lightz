@@ -89,7 +89,7 @@ if __name__ == '__main__':
     button.when_held = handleButtonHeld
 
     web = start_web()
-    web.listen(80)
+    web.listen(8080)
     tornado.ioloop.IOLoop.current().start()
 
     while True:
