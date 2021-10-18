@@ -35,7 +35,7 @@ def updateValues(val, pressed):
         if not client.ws_connection.stream.socket:
             clients.remove(client)
         else:
-            client.send_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
+            client(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
 
 
 def toggleLed():
@@ -136,10 +136,8 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
         print("WebSocket closed")
         clients.remove(self)
 
-    @classmethod
-    def send_message(self, message):
+    def callback(self, message):
         self.write_message(message)
-        return True
 
 
 def start_web():
