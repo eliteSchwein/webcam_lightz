@@ -109,7 +109,7 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
             if not self.__currentLedVal == ledValue or not self.__currentButtonPressed == buttonPressed:
                 self.__currentLedVal = ledValue
                 self.write_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
-            return
+            sleep(0.05)
 
     def on_message(self, message):
         self.write_message(u"You said: " + message)
