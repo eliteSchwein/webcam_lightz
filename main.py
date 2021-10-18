@@ -17,7 +17,7 @@ def toggleLed():
 
     if buttonPressed:
         buttonPressed = False
-        led.value = 0.0
+        ledValue = 0.0
         print("disable LEDs")
         return
     else:
