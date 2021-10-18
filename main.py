@@ -113,14 +113,6 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
 
     def open(self):
         print("WebSocket opened")
-        self.write_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
-        self.__is_open = True
-        while self.__is_open:
-            if not self.__currentLedVal == ledValue or not self.__currentButtonPressed == buttonPressed:
-                self.__currentLedVal = ledValue
-                self.__currentButtonPressed = buttonPressed
-                self.write_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
-            sleep(0.05)
 
     def on_message(self, message):
         print(message)
