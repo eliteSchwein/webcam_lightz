@@ -14,14 +14,16 @@ if __name__ == '__main__':
     while True:
         led.value = ledValue
 
+        if button.is_held:
+            print('Held!')
         if button.is_active:
             if buttonPressed:
                 buttonPressed = False
                 led.value = 0.0
+                print("disable LEDs")
             else:
                 buttonPressed = True
                 if(ledValue == 0.0):
                     ledValue = 1.0
                 led.value = ledValue
-        if button.is_held:
-            print('Held!')
+                print("enable LEDs")
