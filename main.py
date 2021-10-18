@@ -7,7 +7,7 @@ buttonpin = 21
 ledValue = 0.0
 buttonPressed = False
 
-button = Button(buttonpin)
+button = Button(buttonpin, hold_time=0.25)
 led = PWMLED(ledpin)
 
 if __name__ == '__main__':
