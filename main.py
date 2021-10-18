@@ -131,9 +131,9 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         try:
             jsonMessage = json.loads(message)
-            if jsonMessage['brightness']:
+            if "brightness" in jsonMessage:
                 updateValues(jsonMessage['brightness'], buttonPressed)
-            if jsonMessage['enable']:
+            if "enable" in jsonMessage:
                 updateValues(ledValue, jsonMessage['enable'])
         except ValueError:
             self.write_message(json.dumps({"error": "not valid"}))
