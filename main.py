@@ -5,7 +5,7 @@ from time import sleep
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
-import threading import Thread
+from threading import Thread
 
 ledpin = 18
 buttonpin = 21
