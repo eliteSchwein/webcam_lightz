@@ -16,6 +16,7 @@ buttonPressed = False
 fadeUp = False
 
 clients = []
+eventLoop = None
 
 button = Button(buttonpin, hold_time=0.25)
 led = PWMLED(ledpin)
@@ -23,6 +24,7 @@ led = PWMLED(ledpin)
 def updateValues(val, pressed):
     global buttonPressed
     global ledValue
+    global eventLoop
 
     buttonPressed = pressed
     ledValue = val
@@ -31,7 +33,8 @@ def updateValues(val, pressed):
         led.value = 0.0
     else:
         led.value = ledValue
-    tornado.ioloop.IOLoop.instance().add_timeout(datetime.timedelta(seconds=15), EchoWebSocket.write_to_clients)
+
+    eventLoop.add_callback(EchoWebSocket.send_message, json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
 
 
 def toggleLed():
@@ -133,16 +136,20 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
         clients.remove(self)
 
     @classmethod
-    def write_to_clients(self, message):
+    def send_message(self, message):
         for client in clients:
             client.write_message(message)
+            return True
 
 
 def start_web():
+    global eventLoop
+
     print("Start API")
     web = handle_web()
     web.listen(8080)
-    tornado.ioloop.IOLoop.current().start()
+    eventLoop = tornado.ioloop.IOLoop()
+    eventLoop.start()
 
 
 def handle_web():
