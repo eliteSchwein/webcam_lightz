@@ -148,7 +148,7 @@ def start_web():
     print("Start API")
     web = handle_web()
     web.listen(8080)
-    eventLoop = tornado.ioloop.IOLoop()
+    eventLoop = tornado.ioloop.IOLoop.current()
     eventLoop.start()
 
 
