@@ -35,6 +35,8 @@ def handleButtonHeld():
     global buttonPressed
     global button
 
+    buttonPressed = True
+
     while button.is_held:
         if fadeUp:
             if ledValue == 1.0:
@@ -43,9 +45,10 @@ def handleButtonHeld():
             ledValue = +0.1
         else:
             if ledValue == 0.0:
-                fadeUp = False
+                fadeUp = True
                 return
             ledValue = -0.1
+        print("enable LEDs with " + str(ledValue))
     return
 
 
