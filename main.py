@@ -150,5 +150,5 @@ if __name__ == '__main__':
     webThread = Thread(target = start_web())
     ledThread = Thread(target = start_led())
 
-    webThread.start()
     ledThread.start()
+    webThread.start()
