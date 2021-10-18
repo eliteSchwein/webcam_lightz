@@ -10,20 +10,35 @@ buttonPressed = False
 button = Button(buttonpin, hold_time=0.25)
 led = PWMLED(ledpin)
 
+
+def toggleLed():
+    global buttonPressed
+    global ledValue
+
+    if buttonPressed:
+        buttonPressed = False
+        led.value = 0.0
+        print("disable LEDs")
+        return
+    else:
+        buttonPressed = True
+        if (ledValue == 0.0):
+            ledValue = 1.0
+        led.value = ledValue
+        print("enable LEDs with " + ledValue)
+        return
+
+
+def handleButton():
+    if button.is_held:
+        print('Held!')
+        return
+    if button.is_active:
+        toggleLed()
+
+
 if __name__ == '__main__':
     while True:
         led.value = ledValue
-
-        if button.is_held:
-            print('Held!')
-        if button.is_active:
-            if buttonPressed:
-                buttonPressed = False
-                led.value = 0.0
-                print("disable LEDs")
-            else:
-                buttonPressed = True
-                if(ledValue == 0.0):
-                    ledValue = 1.0
-                led.value = ledValue
-                print("enable LEDs")
+        handleButton()
+        sleep(1)
