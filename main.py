@@ -147,8 +147,5 @@ if __name__ == '__main__':
     button.when_activated = toggleLed
     button.when_held = handleButtonHeld
 
-    webThread = Thread(target = start_web())
-    ledThread = Thread(target = start_led())
-
-    ledThread.start()
-    webThread.start()
+    start_led()
+    start_web()
