@@ -19,6 +19,7 @@ led = PWMLED(ledpin)
 
 webThread = None
 
+
 def toggleLed():
     global buttonPressed
     global ledValue
@@ -59,11 +60,14 @@ def handleButtonHeld():
         sleep(0.025)
     return
 
+
 class GetHandler(tornado.web.RequestHandler):
     def prepare(self):
         self.set_header("Content-Type", 'application/json')
+
     def get(self):
         self.write(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
+
 
 class SetHandler(tornado.web.RequestHandler):
     def post(self):
@@ -95,14 +99,17 @@ class SetHandler(tornado.web.RequestHandler):
         else:
             self.send_error(401)
 
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         return
+
 
 class EchoWebSocket(tornado.websocket.WebSocketHandler):
     __is_open = False
     __currentLedVal = ledValue
     __currentButtonPressed = buttonPressed
+
     def open(self):
         print("WebSocket opened")
         self.write_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
@@ -121,10 +128,12 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
         self.__is_open = False
         print("WebSocket closed")
 
+
 def start_web():
     web = handle_web()
     web.listen(8080)
     tornado.ioloop.IOLoop.current().start()
+
 
 def handle_web():
     return tornado.web.Application([
@@ -134,18 +143,19 @@ def handle_web():
         (r"/socket", EchoWebSocket),
     ])
 
+
 def start_led():
     while True:
         if buttonPressed:
             led.value = ledValue
         sleep(0.05)
 
+
 if __name__ == '__main__':
     button.when_activated = toggleLed
     button.when_held = handleButtonHeld
 
-    webThread = Thread(target = start_web())
-
+    webThread = Thread(target=start_web(), daemon=True)
     webThread.start()
 
     start_led()
