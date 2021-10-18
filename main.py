@@ -138,4 +138,5 @@ if __name__ == '__main__':
     while True:
         if buttonPressed:
             led.value = ledValue
+            print(ledValue)
         sleep(0.05)
