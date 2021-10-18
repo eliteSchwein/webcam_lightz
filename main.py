@@ -41,10 +41,12 @@ def handleButtonHeld():
         if fadeUp:
             if ledValue == 1.0:
                 fadeUp = False
+                print("Reached Upper Limit!")
                 return
             ledValue = round(ledValue + 0.1, 1)
         else:
             if ledValue == 0.0:
+                print("Reached Down Limit!")
                 fadeUp = True
                 return
             ledValue = round(ledValue - 0.1, 1)
