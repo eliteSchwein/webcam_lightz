@@ -38,6 +38,7 @@ def handleButtonHeld():
     buttonPressed = True
 
     while button.is_held:
+        print(str(ledValue))
         if fadeUp:
             if ledValue == 1.0:
                 fadeUp = False
