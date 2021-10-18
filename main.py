@@ -14,5 +14,7 @@ if __name__ == '__main__':
     while True:
         led.value = ledValue
 
+        if(button.is_active):
+            print('button active!')
         if(button.is_held):
             print('Held!')
