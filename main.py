@@ -14,23 +14,40 @@ ledValue = 0.0
 buttonPressed = False
 fadeUp = False
 
+clients = []
+
 button = Button(buttonpin, hold_time=0.25)
 led = PWMLED(ledpin)
+
+def updateValues(val, pressed):
+    global buttonPressed
+    global ledValue
+
+    buttonPressed = pressed
+    ledValue = val
+
+    if not pressed:
+        led.value = 0.0
+    else:
+        led.value = ledValue
+
+    for client in clients:
+        EchoWebSocket.write_message(client, json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
+
 
 def toggleLed():
     global buttonPressed
     global ledValue
 
     if buttonPressed:
-        buttonPressed = False
-        led.value = 0.0
+        updateValues(0.0, False)
         print("disable LEDs")
         return
     else:
         buttonPressed = True
         if ledValue == 0.0:
             ledValue = 1.0
-        led.value = ledValue
+        updateValues(ledValue, True)
         print("enable LEDs with " + str(ledValue))
         return
 
@@ -40,8 +57,6 @@ def handleButtonHeld():
     global ledValue
     global buttonPressed
     global button
-
-    buttonPressed = True
 
     while button.is_held:
         if fadeUp:
@@ -54,7 +69,8 @@ def handleButtonHeld():
                 fadeUp = True
             else:
                 ledValue = round(ledValue - 0.005, 3)
-        led.value = ledValue
+
+        updateValues(ledValue, True)
         print("enable LEDs with " + str(ledValue))
         sleep(0.025)
     return
@@ -75,12 +91,10 @@ class SetHandler(tornado.web.RequestHandler):
         if self.request.headers.get("Content-Type", "").startswith("application/json"):
             json_args = json.loads(self.request.body)
             if json_args["off"]:
-                buttonPressed = False
-                led.value = 0.0
+                updateValues(0.0, False)
                 return
             if json_args["on"]:
-                buttonPressed = True
-                led.value = ledValue
+                updateValues(ledValue, True)
                 return
             if not json_args["brightness"]:
                 self.send_error(401)
@@ -90,9 +104,7 @@ class SetHandler(tornado.web.RequestHandler):
                 if brightness > 1.0 or brightness < 0.0:
                     self.send_error(401)
                     return
-                ledValue = brightness
-                buttonPressed = True
-                led.value = ledValue
+                updateValues(brightness, True)
                 self.send_error(200)
             except ValueError:
                 self.send_error(401)
@@ -107,27 +119,19 @@ class MainHandler(tornado.web.RequestHandler):
 
 
 class EchoWebSocket(tornado.websocket.WebSocketHandler):
-    __is_open = False
-    __currentLedVal = ledValue
-    __currentButtonPressed = buttonPressed
 
     def open(self):
         print("WebSocket opened")
         self.write_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
-        self.__is_open = True
-        while self.__is_open:
-            if not self.__currentLedVal == ledValue or not self.__currentButtonPressed == buttonPressed:
-                self.__currentLedVal = ledValue
-                self.__currentButtonPressed = buttonPressed
-                self.write_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
+        clients.append(self)
 
     def on_message(self, message):
         print(message)
         self.write_message(u"You said: " + message)
 
     def on_close(self):
-        self.__is_open = False
         print("WebSocket closed")
+        clients.remove(self)
 
 
 def start_web():
