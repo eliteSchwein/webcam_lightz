@@ -35,7 +35,7 @@ def updateValues(val, pressed):
         if not client.ws_connection.stream.socket:
             clients.remove(client)
         else:
-            EchoWebSocket.send_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
+            client.send_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
 
 
 def toggleLed():
