@@ -18,7 +18,7 @@ def toggleLed():
 
     if buttonPressed:
         buttonPressed = False
-        ledValue = 0.0
+        led.value = 0.0
         print("disable LEDs")
         return
     else:
@@ -49,7 +49,7 @@ def handleButtonHeld():
             else:
                 ledValue = round(ledValue - 0.005, 3)
         print("enable LEDs with " + str(ledValue))
-        sleep(0.1)
+        sleep(0.025)
     return
 
 
@@ -57,4 +57,5 @@ if __name__ == '__main__':
     button.when_activated = toggleLed
     button.when_held = handleButtonHeld
     while True:
-        led.value = ledValue
+        if not buttonPressed:
+            led.value = ledValue
