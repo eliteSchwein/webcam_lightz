@@ -57,5 +57,6 @@ if __name__ == '__main__':
     button.when_activated = toggleLed
     button.when_held = handleButtonHeld
     while True:
+        print(str(buttonPressed))
         if buttonPressed:
             led.value = ledValue
