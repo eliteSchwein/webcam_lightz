@@ -18,7 +18,6 @@ button = Button(buttonpin, hold_time=0.25)
 led = PWMLED(ledpin)
 
 webThread = None
-ledThread = None
 
 def toggleLed():
     global buttonPressed
@@ -33,6 +32,7 @@ def toggleLed():
         buttonPressed = True
         if ledValue == 0.0:
             ledValue = 1.0
+        led.value = ledValue
         print("enable LEDs with " + str(ledValue))
         return
 
@@ -56,6 +56,7 @@ def handleButtonHeld():
                 fadeUp = True
             else:
                 ledValue = round(ledValue - 0.005, 3)
+        led.value = ledValue
         print("enable LEDs with " + str(ledValue))
         sleep(0.025)
     return
@@ -81,6 +82,7 @@ class SetHandler(tornado.web.RequestHandler):
                 return
             if json_args["on"]:
                 buttonPressed = True
+                led.value = ledValue
                 return
             if not json_args["brightness"]:
                 self.send_error(401)
@@ -92,6 +94,7 @@ class SetHandler(tornado.web.RequestHandler):
                     return
                 ledValue = brightness
                 buttonPressed = True
+                led.value = ledValue
                 self.send_error(200)
             except ValueError:
                 self.send_error(401)
@@ -144,22 +147,9 @@ def handle_web():
         (r"/socket", EchoWebSocket),
     ])
 
-
-def start_led():
-    print("Start LED")
-    while True:
-        if buttonPressed:
-            led.value = ledValue
-        sleep(0.05)
-
-
 if __name__ == '__main__':
     button.when_activated = toggleLed
     button.when_held = handleButtonHeld
-
-    ledThread = Thread(target=start_led())
-    ledThread.daemon = True
-    ledThread.start()
 
     webThread = Thread(target=start_web())
     webThread.daemon = True
