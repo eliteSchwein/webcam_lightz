@@ -138,6 +138,7 @@ def handle_web():
 
 def start_led():
     while True:
+        print(str(ledValue))
         if buttonPressed:
             led.value = ledValue
         sleep(0.05)
