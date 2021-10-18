@@ -21,6 +21,7 @@ eventLoop = None
 button = Button(buttonpin, hold_time=0.25)
 led = PWMLED(ledpin)
 
+
 def updateValues(val, pressed):
     global buttonPressed
     global ledValue
@@ -128,8 +129,14 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
         clients.append(self)
 
     def on_message(self, message):
-        print(message)
-        self.write_message(u"You said: " + message)
+        try:
+            jsonMessage = json.loads(message)
+            if jsonMessage['brightness']:
+                updateValues(jsonMessage['brightness'], buttonPressed)
+            if jsonMessage['enable']:
+                updateValues(ledValue, jsonMessage['enable'])
+        except ValueError:
+            self.write_message(json.dumps({"error": "not valid"}))
 
     def on_close(self):
         print("WebSocket closed")
@@ -159,6 +166,7 @@ def handle_web():
         (r"/set", SetHandler),
         (r"/socket", EchoWebSocket),
     ])
+
 
 if __name__ == '__main__':
     button.when_activated = toggleLed
