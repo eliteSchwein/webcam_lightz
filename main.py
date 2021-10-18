@@ -56,12 +56,25 @@ def handleButtonHeld():
         sleep(0.025)
     return
 
-class MainHandler(tornado.web.RequestHandler):
+class GetHandler(tornado.web.RequestHandler):
+    def prepare(self):
+        self.set_header("Content-Type", 'application/json')
+    def get(self):
+        self.write(json.dumps({"brightness": ledValue, "disabeld": buttonPressed}))
+
+class SetHandler(tornado.web.RequestHandler):
     def post(self):
         global ledValue
         global buttonPressed
         if self.request.headers.get("Content-Type", "").startswith("application/json"):
             json_args = json.loads(self.request.body)
+            if json_args["off"]:
+                buttonPressed = False
+                led.value = 0.0
+                return
+            if json_args["on"]:
+                buttonPressed = True
+                return
             if not json_args["brightness"]:
                 self.send_error(401)
                 return
@@ -79,9 +92,26 @@ class MainHandler(tornado.web.RequestHandler):
         else:
             self.send_error(401)
 
+class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+        return
+
+class EchoWebSocket(tornado.websocket.WebSocketHandler):
+    def open(self):
+        print("WebSocket opened")
+
+    def on_message(self, message):
+        self.write_message(u"You said: " + message)
+
+    def on_close(self):
+        print("WebSocket closed")
+
 def start_web():
     return tornado.web.Application([
         (r"/", MainHandler),
+        (r"/get", GetHandler),
+        (r"/set", SetHandler),
+        (r"/socket", EchoWebSocket),
     ])
 
 if __name__ == '__main__':
