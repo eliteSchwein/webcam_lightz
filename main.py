@@ -5,6 +5,7 @@ from time import sleep
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
+import threading import Thread
 
 ledpin = 18
 buttonpin = 21
@@ -15,6 +16,9 @@ fadeUp = False
 
 button = Button(buttonpin, hold_time=0.25)
 led = PWMLED(ledpin)
+
+webThread = None
+ledThread = None
 
 
 def toggleLed():
@@ -120,6 +124,11 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
         print("WebSocket closed")
 
 def start_web():
+    web = handle_web()
+    web.listen(8080)
+    tornado.ioloop.IOLoop.current().start()
+
+def handle_web():
     return tornado.web.Application([
         (r"/", MainHandler),
         (r"/get", GetHandler),
@@ -137,8 +146,11 @@ if __name__ == '__main__':
     button.when_activated = toggleLed
     button.when_held = handleButtonHeld
 
-    start_led()
+    webThread = Thread(target = start_web())
+    ledThread = Thread(target = start_led())
 
-    web = start_web()
-    web.listen(8080)
-    tornado.ioloop.IOLoop.current().start()
+    webThread.start()
+    ledThread.start()
+
+    webThread.join()
+    ledThread.join()
