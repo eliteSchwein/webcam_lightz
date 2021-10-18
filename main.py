@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from gpiozero import PWMLED, Button
 from time import sleep
@@ -30,12 +31,7 @@ def updateValues(val, pressed):
         led.value = 0.0
     else:
         led.value = ledValue
-
-    for client in clients:
-        if not client.ws_connection.stream.socket:
-            clients.remove(client)
-        else:
-            client(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
+    tornado.ioloop.IOLoop.instance().add_timeout(datetime.timedelta(seconds=15), EchoWebSocket.write_to_clients)
 
 
 def toggleLed():
@@ -136,8 +132,10 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
         print("WebSocket closed")
         clients.remove(self)
 
-    def callback(self, message):
-        self.write_message(message)
+    @classmethod
+    def write_to_clients(self, message):
+        for client in clients:
+            client.write_message(message)
 
 
 def start_web():
