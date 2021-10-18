@@ -61,7 +61,7 @@ class GetHandler(tornado.web.RequestHandler):
     def prepare(self):
         self.set_header("Content-Type", 'application/json')
     def get(self):
-        self.write(json.dumps({"brightness": ledValue, "disabeld": buttonPressed}))
+        self.write(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
 
 class SetHandler(tornado.web.RequestHandler):
     def post(self):
@@ -98,13 +98,24 @@ class MainHandler(tornado.web.RequestHandler):
         return
 
 class EchoWebSocket(tornado.websocket.WebSocketHandler):
+    __is_open = False
+    __currentLedVal = ledValue
+    __currentButtonPressed = buttonPressed
     def open(self):
         print("WebSocket opened")
+        self.write_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
+        self.__is_open = True
+        while self.__is_open:
+            if not self.__currentLedVal == ledValue or not self.__currentButtonPressed == buttonPressed:
+                self.__currentLedVal = ledValue
+                self.write_message(json.dumps({"brightness": ledValue, "disabled": buttonPressed}))
+            return
 
     def on_message(self, message):
         self.write_message(u"You said: " + message)
 
     def on_close(self):
+        self.__is_open = False
         print("WebSocket closed")
 
 def start_web():
