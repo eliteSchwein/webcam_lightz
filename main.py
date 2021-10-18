@@ -41,4 +41,4 @@ if __name__ == '__main__':
     while True:
         led.value = ledValue
         handleButton()
-        sleep(1)
+        sleep(0.25)
