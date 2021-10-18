@@ -17,8 +17,6 @@ fadeUp = False
 button = Button(buttonpin, hold_time=0.25)
 led = PWMLED(ledpin)
 
-webThread = None
-
 def toggleLed():
     global buttonPressed
     global ledValue
@@ -152,6 +150,4 @@ if __name__ == '__main__':
     button.when_activated = toggleLed
     button.when_held = handleButtonHeld
 
-    webThread = Thread(target=start_web())
-    webThread.daemon = True
-    webThread.start()
+    start_web()
