@@ -25,7 +25,7 @@ def toggleLed():
         if (ledValue == 0.0):
             ledValue = 1.0
         led.value = ledValue
-        print("enable LEDs with " + ledValue)
+        print("enable LEDs with " + str(ledValue))
         return
 
 
