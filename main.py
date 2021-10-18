@@ -42,12 +42,12 @@ def handleButtonHeld():
             if ledValue == 1.0:
                 fadeUp = False
             else:
-                ledValue = round(ledValue + 0.005, 2)
+                ledValue = round(ledValue + 0.005, 3)
         else:
             if ledValue == 0.0:
                 fadeUp = True
             else:
-                ledValue = round(ledValue - 0.005, 2)
+                ledValue = round(ledValue - 0.005, 3)
         print("enable LEDs with " + str(ledValue))
         sleep(0.1)
     return
